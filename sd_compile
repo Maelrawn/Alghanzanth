@@ -1,0 +1,2 @@
+#!/bin/bash
+g++ "$1".cpp -lSDL2-2.0 -lSDL2_image -o "$1"
