@@ -20,11 +20,7 @@ void displayFeatures(Floor& floor){
 	srcrect.h = 48;
 	for(int i = 0; i < 27; i++){
 		for(int j = 0; j < 15; j++){
-			dstrect.x = i * 48;
-			dstrect.y = j * 48;
-			srcrect.x = floor.map[i][j].type->graphic->x;
-			srcrect.y = floor.map[i][j].type->graphic->y;
-			if(SDL_RenderCopy(globalRenderer, floor.map[i][j].type->graphic->texture, &srcrect, &dstrect))
+			if(drawGraphicAtCoords(floor.map[i][j], i, j))
 				printf("SDL Error in drawing routine: %s\n", SDL_GetError());
 		}
 	}

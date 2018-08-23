@@ -1,7 +1,12 @@
 //Figure out a way to organize these in a way that is easily manipulated programmatically
 //Probably tiles of the same type with different detail will be grouped together in arrays
+//Can do this with another class, abstracting individual tiles into groups
 
-Graphic* wallGraphic = new Graphic(0, 0, "./resources/world.png");
+SDL_Texture* creaturesFrame1 = NULL;
+SDL_Texture* creaturesFrame2 = NULL;
+SDL_Texture* portraits = NULL;
+SDL_Texture* items = NULL;
+SDL_Texture* tiles = NULL;
 // Graphic* wallGraphic = new Graphic(1, 0, "./resources/world.png");
 // Graphic* wallGraphic = new Graphic(2, 0, "./resources/world.png");
 // Graphic* wallGraphic = new Graphic(3, 0, "./resources/world.png");
@@ -90,7 +95,6 @@ Graphic* wallGraphic = new Graphic(0, 0, "./resources/world.png");
 // Graphic* wallGraphic = new Graphic(6, 5, "./resources/world.png");
 // Graphic* wallGraphic = new Graphic(7, 5, "./resources/world.png");
 // Graphic* wallGraphic = new Graphic(8, 5, "./resources/world.png");
-Graphic* grassGraphic = new Graphic(9, 5, "./resources/world.png");
 // Graphic* wallGraphic = new Graphic(10, 5, "./resources/world.png");
 // Graphic* wallGraphic = new Graphic(11, 5, "./resources/world.png");
 // Graphic* wallGraphic = new Graphic(12, 5, "./resources/world.png");

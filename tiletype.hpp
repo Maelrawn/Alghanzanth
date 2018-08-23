@@ -18,6 +18,3 @@ struct TileType{
 	}
 	~TileType(){}
 };
-
-TileType* wallType = new TileType(wallGraphic, true, true);
-TileType* grassType = new TileType(grassGraphic, false, false);
