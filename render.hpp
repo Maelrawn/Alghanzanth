@@ -4,97 +4,88 @@
 SDL_Renderer* globalRenderer;
 SDL_Window* gameWindow;
 SDL_Surface* gameSurface;
+SDL_Rect dstrect;
 int SCREEN_HEIGHT = 720;
 int SCREEN_WIDTH = 1280;
 
-struct Graphic{
-	int x;
-	int y;
+struct SpriteSheet{
+	std::string imagePath = NULL;
 	SDL_Texture* texture = NULL;
-	Graphic(int xIndex, int yIndex, SDL_Texture* texture)
-	:texture(texture){
-		x = xIndex * 48;
-		y = yIndex * 48;
+	SpriteSheet(std::string imagePath)
+	:imagePath(imagePath){
+		SDL_Texture* newTexture = NULL;
+		SDL_Surface* loadedSurface = IMG_Load(this->imagePath.c_str());
+		if(loadedSurface == NULL){
+			printf("Failed to load image! SDL_Image error: %s\n", IMG_GetError());
+		}
+		newTexture = SDL_CreateTextureFromSurface(globalRenderer, loadedSurface);
+		if(newTexture == NULL){
+			printf("Failed to create texture! SDL error: %s\n", SDL_GetError());
+		}
+		SDL_FreeSurface(loadedSurface);
+		texture = newTexture;
 	};
 };
 
-SDL_Texture* loadTexture(std::string imagePath){
-	SDL_Texture* newTexture = NULL;
-	SDL_Surface* loadedSurface = IMG_Load(imagePath.c_str());
-	if(loadedSurface == NULL){
-		printf("Failed to load image! SDL_Image error: %s\n", IMG_GetError());
-	}
-	newTexture = SDL_CreateTextureFromSurface(globalRenderer, loadedSurface);
-	if(newTexture == NULL){
-		printf("Failed to create texture! SDL error: %s\n", SDL_GetError());
-	}
-	SDL_FreeSurface(loadedSurface);
-	return newTexture;
+struct Sprite{
+	int xindex;
+	int yindex;
+	SDL_Rect rect;
+	SpriteSheet* sheet;
+	Sprite(int x, int y, SpriteSheet* sheet)
+	:xindex(x),
+	yindex(y),
+	sheet(sheet){
+		rect.w = 48;
+		rect.h = 48;
+		rect.x = xindex * 48;
+		rect.y = yindex * 48;
+	};
 };
-bool loadMedia(SDL_Texture* texture, std::string imagePath){
-	bool success = true;
-	texture = loadTexture(imagePath);
-	if(texture == NULL){
-		printf("Texture failed to load! IMG_Error: %s\n", IMG_GetError());
-	}
-	return success;
-}
+
 #include "graphics.hpp"
 
 enum class Creature;
 
-struct GraphicSetCreature{
-	enum Frames{	
-		Right1,
-		Right2,
-		Down1,
-		Down2,
-		Up1,
-		Up2,
-		Left1,
-		Left2,
-		FrameTotal
-	};
-	Graphic* graphics[FrameTotal];
-	Graphic* activeFrame;
-	GraphicSetCreature(int xindex, int yindex){
-		graphics[Right1] = new Graphic(xindex, yindex, creaturesFrame1);
-		graphics[Right2] = new Graphic(xindex, yindex, creaturesFrame2);
-		graphics[Down1] = new Graphic(xindex + 1, yindex, creaturesFrame1);
-		graphics[Down2] = new Graphic(xindex + 1, yindex, creaturesFrame2);
-		graphics[Up1] = new Graphic(xindex + 2, yindex, creaturesFrame1);
-		graphics[Up2] = new Graphic(xindex + 2, yindex, creaturesFrame2);
-		graphics[Left1] = new Graphic(xindex + 3, yindex, creaturesFrame1);
-		graphics[Left2] = new Graphic(xindex + 3, yindex, creaturesFrame2);
-	}
-};
+// struct SpriteSetCreature{
+// 	enum Frames{	
+// 		Right1,
+// 		Right2,
+// 		Down1,
+// 		Down2,
+// 		Up1,
+// 		Up2,
+// 		Left1,
+// 		Left2,
+// 		FrameTotal
+// 	};
+// 	Sprite* sprites[FrameTotal];
+// 	Sprite* activeFrame;
+// 	SpriteSetCreature(int xindex, int yindex){
+// 		sprites[Right1] = new Sprite(xindex, yindex, creaturesFrame1);
+// 		sprites[Right2] = new Sprite(xindex, yindex, creaturesFrame2);
+// 		sprites[Down1] = new Sprite(xindex + 1, yindex, creaturesFrame1);
+// 		sprites[Down2] = new Sprite(xindex + 1, yindex, creaturesFrame2);
+// 		sprites[Up1] = new Sprite(xindex + 2, yindex, creaturesFrame1);
+// 		sprites[Up2] = new Sprite(xindex + 2, yindex, creaturesFrame2);
+// 		sprites[Left1] = new Sprite(xindex + 3, yindex, creaturesFrame1);
+// 		sprites[Left2] = new Sprite(xindex + 3, yindex, creaturesFrame2);
+// 	}
+// };
 
-void initializeRects(SDL_Rect &srcrect, SDL_Rect &dstrect){
-	srcrect.w = 48;
-	srcrect.h = 48;
-	dstrect.w = 48;
-	dstrect.h = 48;
-}
-bool drawGraphicAtCoords(Graphic* graphic, int x, int y){
-	SDL_Rect srcrect;
+bool drawGraphicAtCoords(Sprite* graphic, int x, int y){
+	SDL_Rect srcrect = graphic->rect;
 	SDL_Rect dstrect;
-	initializeRects(srcrect, dstrect);
 	dstrect.x = x * 48;
 	dstrect.y = y * 48;
-	srcrect.x = graphic->x;
-	srcrect.y = graphic->y;
-	return SDL_RenderCopy(globalRenderer, graphic->texture, &srcrect, &dstrect);
+	return SDL_RenderCopy(globalRenderer, graphic->sheet->texture, &srcrect, &dstrect);
 }
-bool drawGraphicAtCoords(GraphicSetCreature* graphic, int x, int y){
-	SDL_Rect srcrect;
-	SDL_Rect dstrect;
-	initializeRects(srcrect, dstrect);
-	dstrect.x = x;
-	dstrect.y = y;
-	srcrect.x = graphic->activeFrame->x;
-	srcrect.y = graphic->activeFrame->y;
-	return SDL_RenderCopy(globalRenderer, graphic->activeFrame->texture, &srcrect, &dstrect);
-}
+// bool drawGraphicAtCoords(SpriteSetCreature* graphic, int x, int y){
+// 	SDL_Rect srcrect = graphic->activeFrame->rect;
+// 	dstrect.x = x;
+// 	dstrect.y = y;
+// 	return SDL_RenderCopy(globalRenderer, graphic->activeFrame->sheet->texture, &srcrect, &dstrect);
+// }
 bool initSDL(){
 	bool success = true;
 	if(SDL_Init(SDL_INIT_VIDEO) < 0){
@@ -117,8 +108,9 @@ bool initSDL(){
 	if(!(IMG_Init(imgFlags) && imgFlags)){
 		printf("SDL_Image could not initialize! SDL_Image error: %s\n", IMG_GetError());
 		success = false;
-
 	}
 	gameSurface = SDL_GetWindowSurface(gameWindow);
+	dstrect.w = 48;
+	dstrect.h = 48;
 	return success;
 }

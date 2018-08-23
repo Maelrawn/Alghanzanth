@@ -19,12 +19,8 @@ struct Tile{
 
 };
 bool drawGraphicAtCoords(Tile tile, int x, int y){
-	SDL_Rect srcrect;
-	SDL_Rect dstrect;
-	initializeRects(srcrect, dstrect);
-	dstrect.x = x;
-	dstrect.y = y;
-	srcrect.x = tile.type->graphic->x;
-	srcrect.y = tile.type->graphic->y;
-	return SDL_RenderCopy(globalRenderer, tile.type->graphic->texture, &srcrect, &dstrect);
+	SDL_Rect srcrect = tile.type->sprite->rect;
+	dstrect.x = x * 48;
+	dstrect.y = y * 48;
+	return SDL_RenderCopy(globalRenderer, tile.type->sprite->sheet->texture, &tile.type->sprite->rect, &dstrect);
 }

@@ -1,20 +1,12 @@
 struct TileType{
 	//int framecounter = 0;
-	Graphic* graphic;
+	Sprite* sprite;
 	bool collision = NULL;
 	bool opaque = NULL;
 
-	TileType(Graphic* graphic, bool collision, bool opacity)
-		:graphic(graphic),
+	TileType(Sprite* sprite, bool collision, bool opacity)
+		:sprite(sprite),
 		opaque(opacity),
 		collision(collision)
 	{};
-	TileType& operator=(const TileType& other){
-		this->graphic = other.graphic;
-		this->graphic->texture = other.graphic->texture;
-		this->opaque = other.opaque;
-		this->collision = other.collision;
-		return *this;
-	}
-	~TileType(){}
 };

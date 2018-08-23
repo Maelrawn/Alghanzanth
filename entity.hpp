@@ -1,11 +1,11 @@
-struct Entity{
-	int x;
-	int y;
-	GraphicSetCreature* graphics = NULL;
-	Entity(){};
-	Entity(int x, int y, GraphicSetCreature* graphic)
-		:x(x),
-		y(y),
-		graphics(graphic)
-	{};
-};
+// struct Entity{
+// 	int x;
+// 	int y;
+// 	SpriteSetCreature* graphics = NULL;
+// 	Entity(){};
+// 	Entity(int x, int y, SpriteSetCreature* graphic)
+// 		:x(x),
+// 		y(y),
+// 		graphics(graphic)
+// 	{};
+// };
