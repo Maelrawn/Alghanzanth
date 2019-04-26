@@ -12,9 +12,9 @@ struct Floor{
 
 void displayFeatures(Floor& floor){
 	SDL_RenderClear(globalRenderer);
-	for(int i = 0; i < 27; i++){
-		for(int j = 0; j < 15; j++){
-			drawGraphicAtCoords(floor.map[i][j], i, j);
+	for(int i = 0; i < 80; i++){
+		for(int j = 0; j < 80; j++){
+			drawGraphicAtCoords(camera, floor.map[i][j], i, j);
 				//printf("SDL Error in drawing routine: %s\n", SDL_GetError());
 		}
 	}

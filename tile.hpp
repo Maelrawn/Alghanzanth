@@ -18,9 +18,9 @@ struct Tile{
 	}
 
 };
-bool drawGraphicAtCoords(Tile tile, int x, int y){
+bool drawGraphicAtCoords(Camera camera, Tile tile, int x, int y){
 	SDL_Rect srcrect = tile.type->sprite->rect;
-	dstrect.x = x * 48;
-	dstrect.y = y * 48;
+	dstrect.x = (x - camera.x) * 48;
+	dstrect.y = (y - camera.y) * 48;
 	return SDL_RenderCopy(globalRenderer, tile.type->sprite->sheet->texture, &tile.type->sprite->rect, &dstrect);
 }

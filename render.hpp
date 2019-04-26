@@ -8,6 +8,15 @@ SDL_Rect dstrect;
 int SCREEN_HEIGHT = 720;
 int SCREEN_WIDTH = 1280;
 
+struct Camera{
+	int x = 0;
+	int y = 0;
+	int width = 27;
+	int height = 15;
+};
+
+Camera camera;
+
 struct SpriteSheet{
 	std::string imagePath = NULL;
 	SDL_Texture* texture = NULL;
@@ -43,35 +52,35 @@ struct Sprite{
 	};
 };
 
-#include "graphics.hpp"
 
 enum class Creature;
 
-// struct SpriteSetCreature{
-// 	enum Frames{	
-// 		Right1,
-// 		Right2,
-// 		Down1,
-// 		Down2,
-// 		Up1,
-// 		Up2,
-// 		Left1,
-// 		Left2,
-// 		FrameTotal
-// 	};
-// 	Sprite* sprites[FrameTotal];
-// 	Sprite* activeFrame;
-// 	SpriteSetCreature(int xindex, int yindex){
-// 		sprites[Right1] = new Sprite(xindex, yindex, creaturesFrame1);
-// 		sprites[Right2] = new Sprite(xindex, yindex, creaturesFrame2);
-// 		sprites[Down1] = new Sprite(xindex + 1, yindex, creaturesFrame1);
-// 		sprites[Down2] = new Sprite(xindex + 1, yindex, creaturesFrame2);
-// 		sprites[Up1] = new Sprite(xindex + 2, yindex, creaturesFrame1);
-// 		sprites[Up2] = new Sprite(xindex + 2, yindex, creaturesFrame2);
-// 		sprites[Left1] = new Sprite(xindex + 3, yindex, creaturesFrame1);
-// 		sprites[Left2] = new Sprite(xindex + 3, yindex, creaturesFrame2);
-// 	}
-// };
+struct SpriteSetCreature{
+	int frame = 0;
+	enum Frames{	
+		Right1,
+		Right2,
+		Down1,
+		Down2,
+		Up1,
+		Up2,
+		Left1,
+		Left2,
+		FrameTotal
+	};
+	Sprite* sprites[FrameTotal];
+	Sprite* activeFrame;
+	SpriteSetCreature(int xindex, int yindex, SpriteSheet* sheet1, SpriteSheet* sheet2){
+		sprites[Right1] = new Sprite(xindex, yindex, sheet1);
+		sprites[Right2] = new Sprite(xindex, yindex, sheet2);
+		sprites[Down1] = new Sprite(xindex + 1, yindex, sheet1);
+		sprites[Down2] = new Sprite(xindex + 1, yindex, sheet2);
+		sprites[Up1] = new Sprite(xindex + 2, yindex, sheet1);
+		sprites[Up2] = new Sprite(xindex + 2, yindex, sheet2);
+		sprites[Left1] = new Sprite(xindex + 3, yindex, sheet1);
+		sprites[Left2] = new Sprite(xindex + 3, yindex, sheet2);
+	}
+};
 
 bool drawGraphicAtCoords(Sprite* graphic, int x, int y){
 	SDL_Rect srcrect = graphic->rect;
