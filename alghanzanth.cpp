@@ -2,13 +2,17 @@
 #include <string>
 #include <vector>
 #include <chrono>
-#include "render.hpp"
+#include "sprite.hpp"
 #include "item.hpp"
+#include "tile.hpp"
 #include "dungeon.hpp"
 #include "entity.hpp"
 #include "graphics.hpp"
+#include "render.hpp"
 
 void generateFeatures(Floor& floor);
+unsigned int previousTime;
+
 
 int main(){
 	srand(time(NULL));
@@ -41,31 +45,37 @@ int main(){
 	bool quit = false;
 	SDL_Event event;
 	while(!quit){
-		while(SDL_PollEvent(&event) != 0){
-			if(event.type == SDL_QUIT)
-				quit = true;
-			else if(event.type == SDL_KEYDOWN){
-				switch(event.key.keysym.sym){		
-					case SDLK_UP:
-						if(camera.y > 0)
-							camera.y -= 1;
-						break;
-					case SDLK_RIGHT:
-						if(camera.x < 100)
-							camera.x += 1;
-						break;
-					case SDLK_DOWN:
-						if(camera.y < 100)
-							camera.y += 1;
-						break;
-					case SDLK_LEFT:
-						if(camera.x > 0)
-							camera.x -= 1;
-						break;
+		if((SDL_GetTicks() - previousTime) >= 17){
+			previousTime = SDL_GetTicks();
+			while(SDL_PollEvent(&event) != 0){
+				if(event.type == SDL_KEYDOWN){
+					switch(event.key.keysym.sym){		
+						case SDLK_UP:
+							if(camera.y > 0)
+								camera.y -= 1;
+							break;
+						case SDLK_RIGHT:
+							if(camera.x < 100)
+								camera.x += 1;
+							break;
+						case SDLK_DOWN:
+							if(camera.y < 100)
+								camera.y += 1;
+							break;
+						case SDLK_LEFT:
+							if(camera.x > 0)
+								camera.x -= 1;
+							break;
+						case SDLK_ESCAPE:
+							quit = true;
+							break;
+					}
 				}
 			}
+		displayFeatures(floor);
+		SDL_UpdateWindowSurface(gameWindow);
 		}
-	displayFeatures(floor);
-	SDL_UpdateWindowSurface(gameWindow);
+	SDL_Delay(17 - (SDL_GetTicks() - previousTime));
 	}
+	close();
 }

@@ -1,4 +1,4 @@
-#include "tile.hpp"
+
 
 struct Floor{
 	int x = 80;
@@ -8,6 +8,13 @@ struct Floor{
 	Floor(std::string name){
 		this->name = name;
 	};
+	// void fillFloor(){
+	// 	for(int i = 0; i <= this->x; i++){
+	// 		for(int j = 0; j <= this->y; j++){
+	// 			map[i][j] = 
+	// 		}
+	// 	}
+	// }
 };
 
 void displayFeatures(Floor& floor){
