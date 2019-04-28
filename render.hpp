@@ -22,6 +22,8 @@ struct SpriteSheet{
 	SDL_Texture* texture = NULL;
 	SpriteSheet(std::string imagePath)
 	:imagePath(imagePath){
+	};
+	void initialize(){
 		SDL_Texture* newTexture = NULL;
 		SDL_Surface* loadedSurface = IMG_Load(this->imagePath.c_str());
 		if(loadedSurface == NULL){
@@ -33,7 +35,7 @@ struct SpriteSheet{
 		}
 		SDL_FreeSurface(loadedSurface);
 		texture = newTexture;
-	};
+	}
 };
 
 struct Sprite{

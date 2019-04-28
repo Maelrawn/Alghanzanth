@@ -6,6 +6,7 @@
 #include "item.hpp"
 #include "dungeon.hpp"
 #include "entity.hpp"
+#include "graphics.hpp"
 
 void generateFeatures(Floor& floor);
 
@@ -15,7 +16,11 @@ int main(){
 		printf("SDL has encountered an error and must close. SDL Error: %s\n", SDL_GetError());
 		return -1;
 	}
-	#include "graphics.hpp"
+	creaturesFrame1->initialize();
+	creaturesFrame2->initialize();
+	portraits->initialize();
+	items->initialize();
+	tiles->initialize();
 	Sprite* wallSprite = new Sprite(0, 0, tiles);
 	Sprite* grassSprite = new Sprite(9, 5, tiles);
 	TileType* wallType = new TileType(wallSprite, true, true);
