@@ -5,7 +5,7 @@ struct Direction{
 		:dx(dx),
 		dy(dy),
 	{};
-}
+};
 Direction North = Direction(0, -1);
 Direction Northeast = Direction(1, -1);
 Direction East = Direction(1, 0);
@@ -25,4 +25,4 @@ bool moveEntity(Entity entity, Direction direction, Floor floor){
 		}
 	}
 	return false;
-}
+};

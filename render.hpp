@@ -1,101 +1,20 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
-SDL_Renderer* globalRenderer;
-SDL_Window* gameWindow;
-SDL_Surface* gameSurface;
-SDL_Rect dstrect;
-int SCREEN_HEIGHT = 720;
-int SCREEN_WIDTH = 1280;
-
-struct Camera{
-	int x = 0;
-	int y = 0;
-	int width = 27;
-	int height = 15;
-};
-
-Camera camera;
-
-struct SpriteSheet{
-	std::string imagePath = NULL;
-	SDL_Texture* texture = NULL;
-	SpriteSheet(std::string imagePath)
-	:imagePath(imagePath){
-	};
-	void initialize(){
-		SDL_Texture* newTexture = NULL;
-		SDL_Surface* loadedSurface = IMG_Load(this->imagePath.c_str());
-		if(loadedSurface == NULL){
-			printf("Failed to load image! SDL_Image error: %s\n", IMG_GetError());
-		}
-		newTexture = SDL_CreateTextureFromSurface(globalRenderer, loadedSurface);
-		if(newTexture == NULL){
-			printf("Failed to create texture! SDL error: %s\n", SDL_GetError());
-		}
-		SDL_FreeSurface(loadedSurface);
-		texture = newTexture;
-	}
-};
-
-struct Sprite{
-	int xindex;
-	int yindex;
-	SDL_Rect rect;
-	SpriteSheet* sheet;
-	Sprite(int x, int y, SpriteSheet* sheet)
-	:xindex(x),
-	yindex(y),
-	sheet(sheet){
-		rect.w = 48;
-		rect.h = 48;
-		rect.x = xindex * 48;
-		rect.y = yindex * 48;
-	};
-};
-
-
-enum class Creature;
-
-struct SpriteSetCreature{
-	int frame = 0;
-	enum Frames{	
-		Right1,
-		Right2,
-		Down1,
-		Down2,
-		Up1,
-		Up2,
-		Left1,
-		Left2,
-		FrameTotal
-	};
-	Sprite* sprites[FrameTotal];
-	Sprite* activeFrame;
-	SpriteSetCreature(int xindex, int yindex, SpriteSheet* sheet1, SpriteSheet* sheet2){
-		sprites[Right1] = new Sprite(xindex, yindex, sheet1);
-		sprites[Right2] = new Sprite(xindex, yindex, sheet2);
-		sprites[Down1] = new Sprite(xindex + 1, yindex, sheet1);
-		sprites[Down2] = new Sprite(xindex + 1, yindex, sheet2);
-		sprites[Up1] = new Sprite(xindex + 2, yindex, sheet1);
-		sprites[Up2] = new Sprite(xindex + 2, yindex, sheet2);
-		sprites[Left1] = new Sprite(xindex + 3, yindex, sheet1);
-		sprites[Left2] = new Sprite(xindex + 3, yindex, sheet2);
-	}
-};
-
-bool drawGraphicAtCoords(Sprite* graphic, int x, int y){
+bool drawGraphicAtCoords(Camera camera, Sprite* graphic, int x, int y){
 	SDL_Rect srcrect = graphic->rect;
-	SDL_Rect dstrect;
-	dstrect.x = x * 48;
-	dstrect.y = y * 48;
-	return SDL_RenderCopy(globalRenderer, graphic->sheet->texture, &srcrect, &dstrect);
-}
+	dstrect.x = (x - camera.x) * 48;
+	dstrect.y = (y - camera.y) * 48;
+	return SDL_RenderCopy(gameRenderer, graphic->sheet->texture, &srcrect, &dstrect);
+};
+bool drawGraphicAtCoords(Camera camera, Tile tile, int x, int y){
+	SDL_Rect srcrect = tile.type->sprite->rect;
+	dstrect.x = (x - camera.x) * 48;
+	dstrect.y = (y - camera.y) * 48;
+	return SDL_RenderCopy(gameRenderer, tile.type->sprite->sheet->texture, &tile.type->sprite->rect, &dstrect);
+};
 // bool drawGraphicAtCoords(SpriteSetCreature* graphic, int x, int y){
 // 	SDL_Rect srcrect = graphic->activeFrame->rect;
 // 	dstrect.x = x;
 // 	dstrect.y = y;
-// 	return SDL_RenderCopy(globalRenderer, graphic->activeFrame->sheet->texture, &srcrect, &dstrect);
+// 	return SDL_RenderCopy(gameRenderer, graphic->activeFrame->sheet->texture, &srcrect, &dstrect);
 // }
 bool initSDL(){
 	bool success = true;
@@ -109,12 +28,12 @@ bool initSDL(){
 		printf("SDL could not be initialized! SDL error: %s\n", SDL_GetError());
 		success = false;
 	}
-	globalRenderer = SDL_CreateRenderer(gameWindow, -1, SDL_RENDERER_ACCELERATED);
-	if(globalRenderer == NULL){
+	gameRenderer = SDL_CreateRenderer(gameWindow, -1, SDL_RENDERER_ACCELERATED);
+	if(gameRenderer == NULL){
 		printf("Global renderer could not initialize! SDL error: %s/n", SDL_GetError());
 		success = false;
 	}
-	SDL_SetRenderDrawColor(globalRenderer, 0x00, 0x00, 0x00, 0x00);
+	SDL_SetRenderDrawColor(gameRenderer, 0x00, 0x00, 0x00, 0x00);
 	int imgFlags = IMG_INIT_PNG;
 	if(!(IMG_Init(imgFlags) && imgFlags)){
 		printf("SDL_Image could not initialize! SDL_Image error: %s\n", IMG_GetError());
@@ -124,4 +43,29 @@ bool initSDL(){
 	dstrect.w = 48;
 	dstrect.h = 48;
 	return success;
-}
+};
+void displayFeatures(Floor& floor){
+	SDL_RenderClear(gameRenderer);
+	for(int i = 0; i < 80; i++){
+		for(int j = 0; j < 80; j++){
+			drawGraphicAtCoords(camera, floor.map[i][j], i, j);
+				//printf("SDL Error in drawing routine: %s\n", SDL_GetError());
+		}
+	}
+	for(int i = 0 - camera.width; i < floor.x + camera.width; i++){
+		for(int j = 0 - camera.height; j < floor.y + camera.height; j++){
+			if(!floor.inBounds(i, j))
+				drawGraphicAtCoords(camera, wallSprite, i, j);
+		}
+	}
+	SDL_RenderPresent(gameRenderer);
+};
+void close(){
+	SDL_DestroyRenderer(gameRenderer);
+	gameRenderer = NULL;
+	SDL_FreeSurface(gameSurface);
+	gameSurface = NULL;
+	SDL_DestroyWindow(gameWindow);
+	gameWindow = NULL;
+	SDL_Quit();
+};
